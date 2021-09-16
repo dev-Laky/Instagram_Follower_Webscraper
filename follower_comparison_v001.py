@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog
 from colors.colors import red, green
+
 __version__ = "0.0.1"
 
 GOLD = 226
@@ -44,4 +45,5 @@ def main():
 
 
 if __name__ == "__main__":
+    print(__version__)
     main()
