@@ -193,7 +193,7 @@ class Scraper:
 
                 try:
                     if followers[0].get_attribute('alt'):
-                        self.users.add(followers[0].get_attribute('alt')[:-18])  # 's profile picture --> 12 Zeichen
+                        self.users.add(followers[0].get_attribute('alt')[:-12])  # s Profilbild --> 12 Zeichen
                         if self.status < 100:  # 100% max
                             self.status = round(100 * len(self.users) / self.sub_count, 0)
                     else:
@@ -206,7 +206,7 @@ class Scraper:
                     f'/html/body/div[6]/div/div/div[2]/ul/div/li[{n + 1}]/div/div[1]/div[1]/div/span/img')
                 try:
                     if followers[0].get_attribute('alt'):
-                        self.users.add(followers[0].get_attribute('alt')[:-18])  # 's profile picture --> 12 Zeichen
+                        self.users.add(followers[0].get_attribute('alt')[:-12])  # s Profilbild --> 12 Zeichen
                         if self.status < 100:  # 100% max
                             self.status = round(100 * len(self.users) / self.sub_count, 0)
                     else:
