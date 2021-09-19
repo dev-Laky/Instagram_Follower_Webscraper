@@ -127,11 +127,17 @@ class Scraper:
         try:
             sub_count_atr = self.driver.find_elements_by_xpath(
                 '/html/body/div[1]/section/main/div/header/section/ul/li[2]/a/span')
-            self.sub_count = int(sub_count_atr[0].get_attribute('title'))
+            if "." in sub_count_atr[0].get_attribute('title'):
+                self.sub_count = int(sub_count_atr[0].get_attribute('title').replace(".", ""))
+            else:
+                self.sub_count = int(sub_count_atr[0].get_attribute('title'))
         except IndexError:
             try:
                 sub_count_atr = self.driver.find_elements_by_xpath(
                     '/html/body/div[1]/div/div/section/main/div/header/section/ul/li[2]/a/span')
+            if "." in sub_count_atr[0].get_attribute('title'):
+                self.sub_count = int(sub_count_atr[0].get_attribute('title').replace(".", ""))
+            else:
                 self.sub_count = int(sub_count_atr[0].get_attribute('title'))
             except ValueError:
                 self.sub_count = 1
