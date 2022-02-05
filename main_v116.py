@@ -16,7 +16,7 @@ import json
 import sys
 import os
 
-__version__ = "1.1.5"
+__version__ = "1.1.6"
 
 FIREFOX_WEBDRIVER_FILE_PATH = r"firefox_webdriver/geckodriver.exe"
 FOLLOWER_DATA_FILE_PATH = r"followers.txt"
@@ -144,7 +144,7 @@ class Scraper:
 
         follower_box = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((
-                By.XPATH, '/html/body/div[6]/div/div/div[2]/ul')))
+                By.XPATH, '/html/body/div[6]/div/div/div/div[2]')))
         follower_box.click()
 
         def status_thr():
@@ -195,7 +195,7 @@ class Scraper:
             for n in range(self.sub_count):
                 # user without story
                 followers = self.driver.find_elements_by_xpath(
-                    f'/html/body/div[6]/div/div/div[2]/ul/div/li[{n + 1}]/div/div[1]/div[1]/div/a/img')
+                    f'/html/body/div[6]/div/div/div/div[2]/ul/div/li[{n + 1}]/div/div[1]/div[1]/div/a/img')
 
                 try:
                     if followers[0].get_attribute('alt'):
@@ -209,7 +209,7 @@ class Scraper:
 
                 # user with story
                 followers = self.driver.find_elements_by_xpath(
-                    f'/html/body/div[6]/div/div/div[2]/ul/div/li[{n + 1}]/div/div[1]/div[1]/div/span/img')
+                    f'/html/body/div[6]/div/div/div/div[2]/ul/div/li[{n + 1}]/div/div[1]/div[1]/div/span/img')
                 try:
                     if followers[0].get_attribute('alt'):
                         self.users.add(followers[0].get_attribute('alt')[:-12])  # s Profilbild --> 12 Zeichen
@@ -392,10 +392,10 @@ class Scraper:
             print(green("save_data passed. ✓"))
 
         def finish_info():
-            if download_test_thr.is_alive():
-                finish_info()
-            else:
-                print(color("All tests passed.", fg=GOLD))
+            while True:
+                if not download_test_thr.is_alive():
+                    print(color("All tests passed.", fg=GOLD))
+                    break
 
         finish_info()
 
