@@ -16,7 +16,7 @@ import json
 import sys
 import os
 
-__version__ = "1.1.6"
+__version__ = "1.1.7"
 
 FIREFOX_WEBDRIVER_FILE_PATH = r"firefox_webdriver/geckodriver.exe"
 FOLLOWER_DATA_FILE_PATH = r"followers.txt"
@@ -117,16 +117,11 @@ class Scraper:
         return True
 
     def get_subs(self):
-        try:
-            WebDriverWait(self.driver, 10).until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, f"a[href='/{self.target}/followers/']"))).click()
-        except TimeoutException:
-            sleep(1)
-            self.get_subs()
+        input(color("Click on 'followers' to open the follower list. If you done that press Enter.", fg=GOLD))
 
         try:
             sub_count_atr = self.driver.find_elements_by_xpath(
-                '/html/body/div[1]/section/main/div/header/section/ul/li[2]/a/span')
+                '/html/body/div[1]/section/main/div/header/section/ul/li[2]/a/div/span')
             if "." in sub_count_atr[0].get_attribute('title'):
                 self.sub_count = int(sub_count_atr[0].get_attribute('title').replace(".", ""))
             else:
@@ -134,7 +129,7 @@ class Scraper:
         except IndexError:
             try:
                 sub_count_atr = self.driver.find_elements_by_xpath(
-                    '/html/body/div[1]/div/div/section/main/div/header/section/ul/li[2]/a/span')
+                    '/html/body/div[1]/section/main/div/header/section/ul/li[2]/a/div/span')
                 if "." in sub_count_atr[0].get_attribute('title'):
                     self.sub_count = int(sub_count_atr[0].get_attribute('title').replace(".", ""))
                 else:
