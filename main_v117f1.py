@@ -16,7 +16,7 @@ import json
 import sys
 import os
 
-__version__ = "1.1.7"
+__version__ = "1.1.7f1"
 
 FIREFOX_WEBDRIVER_FILE_PATH = r"firefox_webdriver/geckodriver.exe"
 FOLLOWER_DATA_FILE_PATH = r"followers.txt"
