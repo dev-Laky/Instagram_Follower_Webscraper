@@ -16,7 +16,7 @@ import json
 import sys
 import os
 
-__version__ = "1.1.7"
+__version__ = "1.1.7f1"
 
 FIREFOX_WEBDRIVER_FILE_PATH = r"firefox_webdriver/geckodriver.exe"
 FOLLOWER_DATA_FILE_PATH = r"followers.txt"
@@ -77,7 +77,7 @@ class Scraper:
 
         # accept cookies
         WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, "//button[text()='Alle annehmen']"))).click()
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "button.aOOlW:nth-child(2)"))).click()
 
     def login(self):
         # fill inputs
