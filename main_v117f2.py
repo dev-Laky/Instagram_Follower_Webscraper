@@ -11,12 +11,14 @@ from speedtest import Speedtest
 from statistics import mean
 from random import shuffle
 from time import sleep
+from pyautogui import scroll, position
+import keyboard
 import threading
 import json
 import sys
 import os
 
-__version__ = "1.1.7f1"
+__version__ = "1.1.7f2"
 
 FIREFOX_WEBDRIVER_FILE_PATH = r"firefox_webdriver/geckodriver.exe"
 FOLLOWER_DATA_FILE_PATH = r"followers.txt"
@@ -35,7 +37,7 @@ class Scraper:
         self.ERROR_101 = False
         self.users = set()
         self.current_follower = []
-        self.data_per_follower = 15.5
+        self.data_per_follower = 5
         self.follower_per_sec = 0.40
         self.status = 0
         self.error_tries = 0
@@ -121,7 +123,7 @@ class Scraper:
 
         try:
             sub_count_atr = self.driver.find_elements_by_xpath(
-                '/html/body/div[1]/section/main/div/header/section/ul/li[2]/a/div/span')
+                '/html/body/div[1]/div/div[1]/div/div[1]/div/div/div[1]/div[1]/section/main/div/header/section/ul/li[2]/a/div/span')
             if "." in sub_count_atr[0].get_attribute('title'):
                 self.sub_count = int(sub_count_atr[0].get_attribute('title').replace(".", ""))
             else:
@@ -129,7 +131,7 @@ class Scraper:
         except IndexError:
             try:
                 sub_count_atr = self.driver.find_elements_by_xpath(
-                    '/html/body/div[1]/section/main/div/header/section/ul/li[2]/a/div/span')
+                    '/html/body/div[1]/div/div[1]/div/div[1]/div/div/div[1]/div[1]/section/main/div/header/section/ul/li[2]/a/div/span')
                 if "." in sub_count_atr[0].get_attribute('title'):
                     self.sub_count = int(sub_count_atr[0].get_attribute('title').replace(".", ""))
                 else:
@@ -137,10 +139,21 @@ class Scraper:
             except ValueError:
                 self.sub_count = 1
 
+        print(color("1. - Place your mouse on the scrollbox.\n"
+                    '2. - Press the "x" and "y" key at the same time. ', fg=GOLD))
+
+        while True:
+            keyboard.wait("x+y")
+            break
+        x1, y1 = position()
+
+        '''
         follower_box = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((
-                By.XPATH, '/html/body/div[6]/div/div/div/div[2]')))
+                By.XPATH,
+                '/html/body/div[1]/div/div[1]/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div/div/div/div[2]/ul/div')))
         follower_box.click()
+        '''
 
         def status_thr():
             self.check_for_data()
@@ -183,14 +196,15 @@ class Scraper:
         threading.Thread(target=status_thr).start()
 
         def scroll_get_followers():
-            ActionChains(self.driver).send_keys(Keys.END).perform()
+            # ActionChains(self.driver).send_keys(Keys.PAGE_DOWN).perform()
+            scroll(-1000000, x=x1, y=y1)
 
-            sleep(2)
+            sleep(1)
 
             for n in range(self.sub_count):
                 # user without story
                 followers = self.driver.find_elements_by_xpath(
-                    f'/html/body/div[6]/div/div/div/div[2]/ul/div/li[{n + 1}]/div/div[1]/div[1]/div/a/img')
+                    f'/html/body/div[1]/div/div[1]/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div/div/div/div[2]/ul/div/li[{n + 1}]/div/div[1]/div/div/a/img')
 
                 try:
                     if followers[0].get_attribute('alt'):
@@ -204,7 +218,7 @@ class Scraper:
 
                 # user with story
                 followers = self.driver.find_elements_by_xpath(
-                    f'/html/body/div[6]/div/div/div/div[2]/ul/div/li[{n + 1}]/div/div[1]/div[1]/div/span/img')
+                    f'/html/body/div[1]/div/div[1]/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div/div/div/div[2]/ul/div/li[{n + 1}]/div/div[1]/div[1]/div/span/img')
                 try:
                     if followers[0].get_attribute('alt'):
                         self.users.add(followers[0].get_attribute('alt')[:-12])  # s Profilbild --> 12 Zeichen
@@ -217,10 +231,8 @@ class Scraper:
 
         timestamp_1 = datetime.now()
 
-        for _ in range(self.sub_count // 10):
+        for _ in range((self.sub_count // 10) + 5):
             scroll_get_followers()
-
-        timestamp_2 = datetime.now()
 
         # checks if one more scroll is needed
         def error_check():
@@ -237,13 +249,15 @@ class Scraper:
                         inp = input(red(f"Do you want to save {len(self.users)}/{self.sub_count} followers? (y/n): "))
                         # print(self.users)
                         if inp == "n" or inp == "N":
-                            #self.FST = timedelta.total_seconds(timestamp_2 - timestamp_1)
-                            #self.save_data()
+                            # self.FST = timedelta.total_seconds(timestamp_2 - timestamp_1)
+                            # self.save_data()
                             exit(-1)
                         elif inp == "y" or inp == "Y":
                             pass
 
         error_check()
+
+        timestamp_2 = datetime.now()
 
         self.FST = timedelta.total_seconds(timestamp_2 - timestamp_1)
         print(red(f"FST: {self.FST} sec(s)"))  # Follower Srape Time
